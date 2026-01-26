@@ -1,0 +1,23 @@
+# DigitalOcean App Platform Specification
+name: ballot-panchali
+region: nyc
+
+services:
+  - name: web
+    github:
+      repo: YOUR_USERNAME/ballot-panchali  # Update with your GitHub username
+      branch: main
+      deploy_on_push: true
+    build_command: npm install -g pnpm && pnpm install && pnpm build && pnpm db:push
+    run_command: pnpm start
+    envs:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+    http_port: 3000
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    routes:
+      - path: /
+
