@@ -1,0 +1,168 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/typography';
+
+/* Bengali Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Tiro+Bangla:ital@0;1&display=swap');
+
+@theme {
+	/* Ballot Panchali Color Palette */
+	--color-primary: #1a1512;
+	--color-secondary: #2d1b1b;
+	--color-accent: #d4af37;
+	--color-accent-hover: #b8860b;
+	--color-green-corner: #2e7d32;
+	--color-green-corner-dark: #1b5e20;
+	--color-red-corner: #c62828;
+	--color-red-corner-dark: #b71c1c;
+	--color-cream: #f5f0e1;
+	--color-tan: #c9a66b;
+	--color-brown: #6b4423;
+
+	/* Font Family */
+	--font-bengali: 'Hind Siliguri', 'Tiro Bangla', sans-serif;
+}
+
+/* Apply Bengali font globally */
+html {
+	font-family: var(--font-bengali);
+}
+
+/* Ballot Background Pattern */
+.ballot-bg {
+	background:
+		radial-gradient(ellipse at top, rgba(212, 175, 55, 0.1) 0%, transparent 50%),
+		radial-gradient(ellipse at bottom, rgba(46, 125, 50, 0.15) 0%, transparent 50%),
+		linear-gradient(180deg, #1a1512 0%, #2d1b1b 50%, #1a1512 100%);
+	background-attachment: fixed;
+}
+
+/* Golden Glow Effect */
+.golden-glow {
+	box-shadow:
+		0 0 20px rgba(212, 175, 55, 0.4),
+		0 0 40px rgba(212, 175, 55, 0.2),
+		0 0 60px rgba(212, 175, 55, 0.1);
+}
+
+/* Ballot Emblem Animation */
+.ballot-emblem {
+	text-shadow:
+		0 0 10px rgba(212, 175, 55, 0.5),
+		0 0 20px rgba(212, 175, 55, 0.3),
+		0 0 30px rgba(212, 175, 55, 0.2);
+}
+
+/* Ornate Divider */
+.ornate-divider {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
+
+.ornate-divider::before,
+.ornate-divider::after {
+	content: '';
+	flex: 1;
+	height: 2px;
+	background: linear-gradient(90deg, transparent, var(--color-accent), transparent);
+}
+
+@layer components {
+	.btn-primary {
+		@apply rounded-lg px-6 py-3 font-semibold transition-all duration-300 hover:scale-105 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:scale-100;
+		background: linear-gradient(135deg, var(--color-green-corner), var(--color-green-corner-dark));
+		color: var(--color-cream);
+		border: 2px solid var(--color-accent);
+		box-shadow: 0 4px 15px rgba(46, 125, 50, 0.4);
+	}
+
+	.btn-primary:hover:not(:disabled) {
+		background: linear-gradient(135deg, var(--color-green-corner-dark), var(--color-green-corner));
+		box-shadow: 0 6px 25px rgba(212, 175, 55, 0.3);
+	}
+
+	.btn-secondary {
+		@apply rounded-lg px-4 py-2 transition-all duration-300;
+		background: transparent;
+		color: var(--color-cream);
+		border: 1px solid var(--color-accent);
+	}
+
+	.btn-secondary:hover {
+		background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(212, 175, 55, 0.1));
+		box-shadow: 0 4px 15px rgba(212, 175, 55, 0.2);
+	}
+
+	.card-base {
+		@apply rounded-xl p-6 shadow-xl backdrop-blur-sm;
+		background: linear-gradient(135deg, rgba(45, 27, 27, 0.9), rgba(26, 21, 18, 0.95));
+		border: 2px solid var(--color-accent);
+		box-shadow:
+			0 10px 40px rgba(0, 0, 0, 0.5),
+			inset 0 0 30px rgba(212, 175, 55, 0.05);
+	}
+
+	/* Input Styling */
+	.ballot-input {
+		@apply w-full rounded-lg px-4 py-3 transition-all focus:outline-none;
+		background: rgba(45, 27, 27, 0.6);
+		border: 2px solid rgba(212, 175, 55, 0.3);
+		color: var(--color-cream);
+		font-family: var(--font-bengali);
+	}
+
+	.ballot-input::placeholder {
+		color: rgba(245, 240, 225, 0.5);
+	}
+
+	.ballot-input:focus {
+		border-color: var(--color-accent);
+		box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+	}
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+	width: 6px;
+	height: 4px;
+}
+
+::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+	background: var(--color-accent);
+	border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+	background: var(--color-accent-hover);
+}
+
+/* Selection Color */
+::selection {
+	background: rgba(212, 175, 55, 0.3);
+	color: var(--color-cream);
+}
+
+/* Animation for tokens and dice */
+@keyframes bounce {
+	0%, 100% {
+		transform: translateY(0);
+	}
+	50% {
+		transform: translateY(-5px);
+	}
+}
+
+@keyframes pulse {
+	0%, 100% {
+		opacity: 1;
+		transform: scale(1);
+	}
+	50% {
+		opacity: 0.8;
+		transform: scale(1.05);
+	}
+}
