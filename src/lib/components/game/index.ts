@@ -7,6 +7,8 @@ export { default as PlayerPanel } from './PlayerPanel.svelte';
 export { default as WinnerModal } from './WinnerModal.svelte';
 export { default as ActionLog } from './ActionLog.svelte';
 export { default as ConnectionStatus } from './ConnectionStatus.svelte';
+export { default as StoryViewer } from './StoryViewer.svelte';
+export { default as TurnResultCard } from './TurnResultCard.svelte';
 
 // Re-export types
 export type { BoardTile } from '$lib/game/board';

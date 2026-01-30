@@ -54,6 +54,14 @@ export interface GameOverPayload {
 	messageBn: string;
 }
 
+export interface StoryPayload {
+	storyType: 'Rumor' | 'Surprise' | 'Election_Boycott' | 'Jail';
+	titleBn: string;
+	titleEn: string;
+	playerName: string;
+	images: string[];
+}
+
 export interface JoinRoomResponse {
 	success: boolean;
 	roomId?: string;

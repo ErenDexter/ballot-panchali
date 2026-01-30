@@ -11,7 +11,9 @@
 		PlayerPanel,
 		WinnerModal,
 		ActionLog,
-		ConnectionStatus
+		ConnectionStatus,
+		StoryViewer,
+		TurnResultCard
 	} from '$lib/components/game';
 
 	import type {
@@ -20,9 +22,13 @@
 		DiceRolledPayload,
 		NextTurnPayload,
 		GameOverPayload,
-		JoinRoomResponse
+		JoinRoomResponse,
+		StoryPayload
 	} from '$lib/types';
 	import { getAvatarUrl } from '$lib/types';
+
+	// Sound effects
+	import { playSound, initSoundSettings, getMuted, toggleMute, preloadSounds } from '$lib/sounds';
 
 	const roomCode = $page.params.code;
 	const playerName = $page.url.searchParams.get('name') || 'খেলোয়াড়';
@@ -44,14 +50,27 @@
 
 	// Dice state
 	let isRolling = $state(false);
-	let showingResult = $state(false);  // Shows result for 2 seconds
+	let showingResult = $state(false); // Shows result for 2 seconds
 	let lastDiceValue: number | null = $state(null);
-	let currentRollerName: string | null = $state(null);  // Who rolled the dice
+	let currentRollerName: string | null = $state(null); // Who rolled the dice
 
 	// UI state
 	let showCopied = $state(false);
 	let errorMessage = $state('');
 	let winner: Player | null = $state(null);
+	let currentStory: StoryPayload | null = $state(null);
+
+	// Sound state
+	let isMuted = $state(false);
+
+	// Turn result card state
+	let turnResult: {
+		playerName: string;
+		tileIndex: number;
+		diceValue: number;
+		ballotChange: number;
+		messageBn: string;
+	} | null = $state(null);
 
 	// Session persistence
 	function saveSession() {
@@ -135,12 +154,12 @@
 				(response: JoinRoomResponse) => {
 					if (response.success && response.players) {
 						players = response.players.map((p) => ({
-							...players.find((ep) => ep.id === p.id) || {
+							...(players.find((ep) => ep.id === p.id) || {
 								position: 0,
 								ballots: 0,
 								hasCompletedCircle: false,
 								isAlive: true
-							},
+							}),
 							id: p.id,
 							name: p.name,
 							isHost: p.isHost,
@@ -204,11 +223,23 @@
 		});
 
 		socket.on('dice_rolled', (data: DiceRolledPayload) => {
+			// Play dice roll sound
+			playSound('dice');
+
 			// Show the result to all players
 			lastDiceValue = data.diceValue;
 			currentRollerName = data.playerName;
 			isRolling = false;
 			showingResult = true;
+
+			// Set turn result for the result card
+			turnResult = {
+				playerName: data.playerName,
+				tileIndex: data.toPosition,
+				diceValue: data.diceValue,
+				ballotChange: data.ballotChange,
+				messageBn: data.messageBn
+			};
 
 			// Update player position and ballots
 			players = players.map((p) => {
@@ -227,12 +258,25 @@
 				`${data.playerName} ${data.diceValue} পেয়েছেন। ${data.messageBn}`
 			];
 
-			// Keep showing result for 2 seconds so all players can see
+			// Play effect sound after a short delay (let dice sound finish)
+			setTimeout(() => {
+				// Check if player was sent to jail (position 14)
+				if (data.toPosition === 14 && data.messageBn.includes('জেল')) {
+					playSound('jail');
+				} else if (data.ballotChange > 0) {
+					playSound('gain');
+				} else if (data.ballotChange < 0) {
+					playSound('lose');
+				}
+			}, 500);
+
+			// Keep showing result for 3 seconds so all players can see
 			setTimeout(() => {
 				showingResult = false;
+				turnResult = null;
 				// Keep the dice value visible but clear the roller name
 				currentRollerName = null;
-			}, 2000);
+			}, 3000);
 		});
 
 		socket.on('next_turn', (data: NextTurnPayload) => {
@@ -247,7 +291,10 @@
 			}));
 			currentTurnPlayerId = data.currentPlayer;
 			isMyTurn = currentTurnPlayerId === myId;
-			
+
+			// Play turn sound
+			playSound('turn');
+
 			// Don't clear dice state here - let the 2-second timeout handle it
 			// This allows the dice result to remain visible for all players
 
@@ -271,11 +318,29 @@
 			winner = players.find((p) => p.id === data.winnerId) || null;
 			actionLog = [...actionLog, data.messageBn];
 			clearSession();
+
+			// Play winner sound
+			playSound('winner');
+		});
+
+		socket.on('show_story', (data: StoryPayload) => {
+			currentStory = data;
+			// Play story sound when story opens
+			playSound('story');
 		});
 	}
 
-	onMount(connectSocket);
+	onMount(() => {
+		initSoundSettings();
+		isMuted = getMuted();
+		preloadSounds();
+		connectSocket();
+	});
 	onDestroy(() => socket?.disconnect());
+
+	function handleToggleMute() {
+		isMuted = toggleMute();
+	}
 
 	// Game actions
 	function startGame() {
@@ -286,7 +351,7 @@
 		if (!isMyTurn || isRolling || showingResult) return;
 		isRolling = true;
 		// Set our name as the roller (will be confirmed by server)
-		currentRollerName = players.find(p => p.id === myId)?.name || null;
+		currentRollerName = players.find((p) => p.id === myId)?.name || null;
 		socket.emit('roll_dice', { roomId, authToken });
 	}
 
@@ -299,10 +364,31 @@
 	function closeWinnerModal() {
 		winner = null;
 	}
+
+	function closeStory() {
+		currentStory = null;
+	}
 </script>
 
-<div class="ballot-bg min-h-screen text-[#F5F0E1]" style="font-family: 'Hind Siliguri', sans-serif;">
+<div
+	class="ballot-bg min-h-screen text-[#F5F0E1]"
+	style="font-family: 'Hind Siliguri', sans-serif;"
+>
 	<ConnectionStatus status={connectionStatus} />
+
+	<!-- Sound Mute Toggle Button -->
+	<button
+		onclick={handleToggleMute}
+		class="fixed right-4 bottom-4 z-50 flex h-12 w-12 items-center justify-center rounded-full border-2 border-[#D4AF37]/50 bg-[#2D1B1B]/90 text-xl shadow-lg transition-all hover:border-[#D4AF37] hover:bg-[#2D1B1B]"
+		aria-label={isMuted ? 'Unmute sounds' : 'Mute sounds'}
+		title={isMuted ? 'শব্দ চালু করুন' : 'শব্দ বন্ধ করুন'}
+	>
+		{#if isMuted}
+			<span>🔇</span>
+		{:else}
+			<span>🔊</span>
+		{/if}
+	</button>
 
 	<!-- Error Toast -->
 	{#if errorMessage}
@@ -412,8 +498,19 @@
 			<!-- Main Game Area -->
 			<div class="flex flex-1 flex-col gap-4 p-4 lg:flex-row">
 				<!-- Board Section -->
-				<div class="flex flex-1 items-center justify-center">
+				<div class="relative flex flex-1 items-center justify-center">
 					<Board {players} {currentTurnPlayerId} />
+
+					<!-- Turn Result Card -->
+					{#if turnResult}
+						<TurnResultCard
+							playerName={turnResult.playerName}
+							tileIndex={turnResult.tileIndex}
+							diceValue={turnResult.diceValue}
+							ballotChange={turnResult.ballotChange}
+							messageBn={turnResult.messageBn}
+						/>
+					{/if}
 				</div>
 
 				<!-- Side Panel -->
@@ -452,6 +549,10 @@
 		{#if winner}
 			<WinnerModal {winner} {players} onClose={closeWinnerModal} />
 		{/if}
+
+		<!-- Story Viewer -->
+		{#if currentStory}
+			<StoryViewer story={currentStory} onClose={closeStory} />
+		{/if}
 	{/if}
 </div>
-

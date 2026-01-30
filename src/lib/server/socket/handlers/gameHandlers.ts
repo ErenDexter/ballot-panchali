@@ -11,6 +11,7 @@ import {
 	type PlayerState
 } from '../../game/ballot';
 import { activeGames, saveGameState, getPublicPlayerInfo } from '../state';
+import { getStoryForTile } from '../../../game/stories.js';
 
 /**
  * Handle game start (host only)
@@ -151,6 +152,20 @@ export function handleRollDice(io: Server, socket: Socket) {
 			messageBn: result.effectResult.messageBn,
 			crossedStart: result.crossedStart
 		});
+
+		// Check if player landed on a story tile
+		const story = getStoryForTile(result.toPosition);
+		console.log(`[STORY] Player landed on tile ${result.toPosition}, story:`, story?.type || 'none');
+		if (story) {
+			console.log(`[STORY] Emitting show_story for ${story.type} to room ${room.code}`);
+			io.to(room.code).emit('show_story', {
+				storyType: story.type,
+				titleBn: story.titleBn,
+				titleEn: story.titleEn,
+				playerName: currentPlayer.name,
+				images: story.images
+			});
+		}
 
 		// Check for game over
 		if (result.isGameOver && result.winnerId) {

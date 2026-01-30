@@ -61,13 +61,13 @@
 				<span class="corner-title">নির্বাচন</span>
 				<span class="corner-subtitle">কমিশন</span>
 			</div>
-		{:else if cornerType === 'field'}
-			<div class="corner-content field">
-				<span class="corner-title">মাঠ</span>
-			</div>
 		{:else if cornerType === 'jail'}
 			<div class="corner-content jail">
 				<span class="corner-title">জেল</span>
+			</div>
+		{:else if cornerType === 'field'}
+			<div class="corner-content field">
+				<span class="corner-title">মাঠ</span>
 			</div>
 		{/if}
 	</div>
@@ -121,14 +121,14 @@
 
 	.corner-title {
 		font-family: 'Hind Siliguri', sans-serif;
-		font-size: clamp(0.5rem, 1.5vw, 0.9rem);
+		font-size: clamp(0.6rem, 1.8vw, 1.1rem);
 		font-weight: 700;
 		line-height: 1.2;
 	}
 
 	.corner-subtitle {
 		font-family: 'Hind Siliguri', sans-serif;
-		font-size: clamp(0.4rem, 1.2vw, 0.75rem);
+		font-size: clamp(0.5rem, 1.5vw, 0.9rem);
 		font-weight: 600;
 		line-height: 1.1;
 	}
@@ -173,21 +173,21 @@
 
 	.tile-name {
 		font-family: 'Hind Siliguri', sans-serif;
-		font-size: clamp(0.35rem, 1vw, 0.65rem);
+		font-size: clamp(0.45rem, 1.3vw, 0.85rem);
 		font-weight: 700;
 		color: #2d1b1b;
-		line-height: 1.1;
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
+		line-height: 1.15;
+		white-space: pre-line;
+		text-align: center;
 		max-width: 100%;
+		word-break: keep-all;
 	}
 
 	.tile-effect {
 		font-family: 'Hind Siliguri', sans-serif;
-		font-size: clamp(0.3rem, 0.8vw, 0.55rem);
+		font-size: clamp(0.35rem, 1vw, 0.7rem);
 		font-weight: 600;
-		line-height: 1;
+		line-height: 1.1;
 	}
 
 	.surprise-icon {

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { getAvatarUrl } from '$lib/types';
+
 	interface Player {
 		id: string;
 		name: string;
@@ -48,8 +50,8 @@
 				class:is-me={player.id === myId}
 				class:disconnected={!player.isConnected}
 			>
-				<div class="player-avatar" style="background-color: {getPlayerColor(originalIndex)}">
-					{player.name.charAt(0)}
+				<div class="player-avatar" style="border-color: {getPlayerColor(originalIndex)}">
+					<img src={getAvatarUrl(player.name)} alt={player.name} class="avatar-img" />
 				</div>
 				<div class="player-info">
 					<span class="player-name">
@@ -123,18 +125,19 @@
 	}
 
 	.player-avatar {
-		width: 32px;
-		height: 32px;
+		width: 36px;
+		height: 36px;
 		border-radius: 50%;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		color: white;
-		font-weight: 700;
-		font-size: 0.9rem;
-		font-family: 'Hind Siliguri', sans-serif;
-		text-transform: uppercase;
+		overflow: hidden;
+		border: 3px solid;
+		background: #f5f0e1;
 		flex-shrink: 0;
+	}
+
+	.avatar-img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
 	}
 
 	.player-info {

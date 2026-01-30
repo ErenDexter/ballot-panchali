@@ -8,7 +8,7 @@ services:
       repo: YOUR_USERNAME/ballot-panchali  # Update with your GitHub username
       branch: main
       deploy_on_push: true
-    build_command: npm install -g pnpm && pnpm install && pnpm build && pnpm db:push
+    build_command: pnpm install && pnpm build && pnpm db:push
     run_command: pnpm start
     envs:
       - key: NODE_ENV

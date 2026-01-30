@@ -4,6 +4,12 @@
 	import Tile from './Tile.svelte';
 	import PlayerToken from './PlayerToken.svelte';
 
+	// Center board sprites
+	import policeSprite from '$lib/assets/sprites/police.jpeg';
+	import politicalPartySprite from '$lib/assets/sprites/political_party.jpeg';
+	import sushilSprite from '$lib/assets/sprites/sushil.jpeg';
+	import journalistSprite from '$lib/assets/sprites/journalist.jpeg';
+
 	interface Props {
 		players: {
 			id: string;
@@ -32,6 +38,11 @@
 	function getPlayersOnTile(tileIndex: number) {
 		return players.filter((p) => p.position === tileIndex);
 	}
+
+	// Get the global index of a player (for consistent colors)
+	function getPlayerIndex(playerId: string): number {
+		return players.findIndex((p) => p.id === playerId);
+	}
 </script>
 
 <div class="board-container">
@@ -40,24 +51,36 @@
 		<!-- Row 1: Corner TL + Top Tiles + Corner TR -->
 		<div class="corner corner-tl">
 			<Tile tile={cornerTL} isCorner={true} cornerType="start" />
-			{#each getPlayersOnTile(cornerTL.index) as player, i}
-				<PlayerToken {player} index={i} isCurrentTurn={player.id === currentTurnPlayerId} />
+			{#each getPlayersOnTile(cornerTL.index) as player}
+				<PlayerToken
+					{player}
+					index={getPlayerIndex(player.id)}
+					isCurrentTurn={player.id === currentTurnPlayerId}
+				/>
 			{/each}
 		</div>
 
 		{#each topTiles as tile}
 			<div class="tile-wrapper tile-top">
 				<Tile {tile} orientation="top" />
-				{#each getPlayersOnTile(tile.index) as player, i}
-					<PlayerToken {player} index={i} isCurrentTurn={player.id === currentTurnPlayerId} />
+				{#each getPlayersOnTile(tile.index) as player}
+					<PlayerToken
+						{player}
+						index={getPlayerIndex(player.id)}
+						isCurrentTurn={player.id === currentTurnPlayerId}
+					/>
 				{/each}
 			</div>
 		{/each}
 
 		<div class="corner corner-tr">
 			<Tile tile={cornerTR} isCorner={true} cornerType="election-commission" />
-			{#each getPlayersOnTile(cornerTR.index) as player, i}
-				<PlayerToken {player} index={i} isCurrentTurn={player.id === currentTurnPlayerId} />
+			{#each getPlayersOnTile(cornerTR.index) as player}
+				<PlayerToken
+					{player}
+					index={getPlayerIndex(player.id)}
+					isCurrentTurn={player.id === currentTurnPlayerId}
+				/>
 			{/each}
 		</div>
 
@@ -66,8 +89,12 @@
 			<!-- Left tile -->
 			<div class="tile-wrapper tile-left" style="grid-row: {rowIndex + 2}; grid-column: 1;">
 				<Tile tile={leftTiles[rowIndex]} orientation="left" />
-				{#each getPlayersOnTile(leftTiles[rowIndex].index) as player, i}
-					<PlayerToken {player} index={i} isCurrentTurn={player.id === currentTurnPlayerId} />
+				{#each getPlayersOnTile(leftTiles[rowIndex].index) as player}
+					<PlayerToken
+						{player}
+						index={getPlayerIndex(player.id)}
+						isCurrentTurn={player.id === currentTurnPlayerId}
+					/>
 				{/each}
 			</div>
 
@@ -77,41 +104,13 @@
 					<div class="center-content">
 						<!-- Top: প্রশাসন (Administration) -->
 						<div class="center-section center-top">
-							<div class="admin-icon">
-								<svg viewBox="0 0 100 120" class="h-20 w-16 md:h-24 md:w-20">
-									<!-- Simple person with graduation cap -->
-									<ellipse cx="50" cy="85" rx="25" ry="30" fill="#E8DCC4" />
-									<circle cx="50" cy="40" r="20" fill="#E8DCC4" />
-									<polygon points="30,35 50,15 70,35" fill="#2D1B1B" />
-									<rect x="45" y="15" width="10" height="5" fill="#2D1B1B" />
-								</svg>
-							</div>
+							<img src={policeSprite} alt="প্রশাসন" class="center-sprite" />
 							<span class="center-label">প্রশাসন</span>
 						</div>
 
 						<!-- Left: রাজনৈতিক দল (Political Party) -->
 						<div class="center-section center-left">
-							<div class="party-icon">
-								<svg viewBox="0 0 100 80" class="h-16 w-20 md:h-20 md:w-24">
-									<!-- Stylized fish/crowd -->
-									<ellipse
-										cx="50"
-										cy="40"
-										rx="35"
-										ry="25"
-										fill="#C9A66B"
-										stroke="#6B4423"
-										stroke-width="2"
-									/>
-									<circle cx="35" cy="35" r="5" fill="#2D1B1B" />
-									<path
-										d="M80,40 L100,25 L100,55 Z"
-										fill="#C9A66B"
-										stroke="#6B4423"
-										stroke-width="2"
-									/>
-								</svg>
-							</div>
+							<img src={politicalPartySprite} alt="রাজনৈতিক দল" class="center-sprite" />
 							<span class="center-label-vertical">রাজনৈতিক দল</span>
 						</div>
 
@@ -137,42 +136,16 @@
 							</svg>
 						</div>
 
-						<!-- Right: গণমাধ্যম (Mass Media) -->
+						<!-- Right: সুশীল সমাজ (Civil Society) -->
 						<div class="center-section center-right">
-							<div class="media-icon">
-								<svg viewBox="0 0 100 80" class="h-16 w-20 md:h-20 md:w-24">
-									<!-- TV/Media symbol -->
-									<polygon
-										points="30,60 70,60 60,20"
-										fill="#F5E6A3"
-										stroke="#6B4423"
-										stroke-width="2"
-									/>
-									<ellipse cx="70" cy="30" rx="20" ry="15" fill="#888" opacity="0.6" />
-									<ellipse cx="75" cy="25" rx="15" ry="10" fill="#666" opacity="0.5" />
-								</svg>
-							</div>
-							<span class="center-label-vertical">গণমাধ্যম</span>
+							<img src={sushilSprite} alt="সুশীল সমাজ" class="center-sprite" />
+							<span class="center-label-vertical">সুশীল সমাজ</span>
 						</div>
 
-						<!-- Bottom: ক্ষমতাশীল (Ruling) -->
+						<!-- Bottom: সাংবাদিক (Journalist) -->
 						<div class="center-section center-bottom">
-							<div class="power-icon">
-								<svg viewBox="0 0 80 80" class="h-16 w-16 md:h-20 md:w-20">
-									<!-- Boat symbol -->
-									<path
-										d="M10,50 Q40,70 70,50 L60,50 L40,30 L20,50 Z"
-										fill="#6B8E9F"
-										stroke="#2D1B1B"
-										stroke-width="2"
-									/>
-									<circle cx="40" cy="45" r="8" fill="#E8DCC4" />
-									<path d="M35,43 Q40,38 45,43" stroke="#2D1B1B" stroke-width="2" fill="none" />
-									<circle cx="36" cy="42" r="2" fill="#2D1B1B" />
-									<circle cx="44" cy="42" r="2" fill="#2D1B1B" />
-								</svg>
-							</div>
-							<span class="center-label">ক্ষমতাশীল</span>
+							<img src={journalistSprite} alt="সাংবাদিক" class="center-sprite" />
+							<span class="center-label">সাংবাদিক</span>
 						</div>
 					</div>
 				</div>
@@ -181,33 +154,49 @@
 			<!-- Right tile -->
 			<div class="tile-wrapper tile-right" style="grid-row: {rowIndex + 2}; grid-column: 8;">
 				<Tile tile={rightTiles[rowIndex]} orientation="right" />
-				{#each getPlayersOnTile(rightTiles[rowIndex].index) as player, i}
-					<PlayerToken {player} index={i} isCurrentTurn={player.id === currentTurnPlayerId} />
+				{#each getPlayersOnTile(rightTiles[rowIndex].index) as player}
+					<PlayerToken
+						{player}
+						index={getPlayerIndex(player.id)}
+						isCurrentTurn={player.id === currentTurnPlayerId}
+					/>
 				{/each}
 			</div>
 		{/each}
 
 		<!-- Row 8: Corner BL + Bottom Tiles + Corner BR -->
 		<div class="corner corner-bl">
-			<Tile tile={cornerBL} isCorner={true} cornerType="jail" />
-			{#each getPlayersOnTile(cornerBL.index) as player, i}
-				<PlayerToken {player} index={i} isCurrentTurn={player.id === currentTurnPlayerId} />
+			<Tile tile={cornerBL} isCorner={true} cornerType="field" />
+			{#each getPlayersOnTile(cornerBL.index) as player}
+				<PlayerToken
+					{player}
+					index={getPlayerIndex(player.id)}
+					isCurrentTurn={player.id === currentTurnPlayerId}
+				/>
 			{/each}
 		</div>
 
 		{#each bottomTiles as tile}
 			<div class="tile-wrapper tile-bottom">
 				<Tile {tile} orientation="bottom" />
-				{#each getPlayersOnTile(tile.index) as player, i}
-					<PlayerToken {player} index={i} isCurrentTurn={player.id === currentTurnPlayerId} />
+				{#each getPlayersOnTile(tile.index) as player}
+					<PlayerToken
+						{player}
+						index={getPlayerIndex(player.id)}
+						isCurrentTurn={player.id === currentTurnPlayerId}
+					/>
 				{/each}
 			</div>
 		{/each}
 
 		<div class="corner corner-br">
-			<Tile tile={cornerBR} isCorner={true} cornerType="field" />
-			{#each getPlayersOnTile(cornerBR.index) as player, i}
-				<PlayerToken {player} index={i} isCurrentTurn={player.id === currentTurnPlayerId} />
+			<Tile tile={cornerBR} isCorner={true} cornerType="jail" />
+			{#each getPlayersOnTile(cornerBR.index) as player}
+				<PlayerToken
+					{player}
+					index={getPlayerIndex(player.id)}
+					isCurrentTurn={player.id === currentTurnPlayerId}
+				/>
 			{/each}
 		</div>
 	</div>
@@ -241,11 +230,11 @@
 
 	.corner-tl,
 	.corner-tr,
-	.corner-br {
+	.corner-bl {
 		background: linear-gradient(135deg, #2e7d32, #1b5e20);
 	}
 
-	.corner-bl {
+	.corner-br {
 		background: linear-gradient(135deg, #c62828, #b71c1c);
 	}
 
@@ -298,6 +287,15 @@
 		gap: 0.25rem;
 	}
 
+	.center-sprite {
+		width: clamp(3.5rem, 8vw, 5.5rem);
+		height: clamp(3.5rem, 8vw, 5.5rem);
+		object-fit: cover;
+		border-radius: 50%;
+		border: 2px solid #6b4423;
+		box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+	}
+
 	.center-top {
 		grid-area: top;
 	}
@@ -348,9 +346,9 @@
 			padding: 0.25rem;
 		}
 
-		.center-section svg {
-			width: 2rem;
-			height: 2rem;
+		.center-sprite {
+			width: 2.5rem;
+			height: 2.5rem;
 		}
 	}
 </style>

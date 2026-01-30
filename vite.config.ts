@@ -20,5 +20,8 @@ const webSocketServer = {
 };
 
 export default defineConfig({
-	plugins: [tailwindcss(), sveltekit(), webSocketServer]
+	plugins: [tailwindcss(), sveltekit(), webSocketServer],
+	server: {
+		allowedHosts: ['dev.ranat.me']
+	}
 });
