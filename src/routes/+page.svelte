@@ -24,7 +24,7 @@
 			);
 		}
 	}
-
+	
 	async function createRoom() {
 		if (!playerName.trim()) return;
 		loading = true;

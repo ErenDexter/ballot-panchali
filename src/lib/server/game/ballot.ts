@@ -9,7 +9,8 @@ export const GAME_CONFIG = {
 	STARTING_BALLOTS: 0,
 	STARTING_POSITION: 0,
 	DICE_MIN: 1,
-	DICE_MAX: 6
+	DICE_MAX: 6,
+	ROUNDS_TO_WIN: 3 // Number of complete circles required to win
 };
 
 // Player state in memory during game
@@ -19,7 +20,7 @@ export interface PlayerState {
 	socketId: string;
 	position: number;
 	ballots: number;
-	hasCompletedCircle: boolean;
+	completedCircles: number; // Number of complete rounds completed
 	isAlive: boolean;
 	isConnected: boolean;
 	jailedTurnsRemaining: number; // Number of turns player must skip due to jail
@@ -146,7 +147,8 @@ export function processTurn(
 ): {
 	diceValue: number;
 	fromPosition: number;
-	toPosition: number;
+	landedPosition: number; // Position where player first landed (before effects like move_back)
+	toPosition: number; // Final position after all effects
 	effectResult: TileEffectResult;
 	crossedStart: boolean;
 	isGameOver: boolean;
@@ -162,6 +164,7 @@ export function processTurn(
 		return {
 			diceValue: 0,
 			fromPosition: player.position,
+			landedPosition: player.position,
 			toPosition: player.position,
 			effectResult: {
 				ballotChange: 0,
@@ -202,17 +205,20 @@ export function processTurn(
 		player.jailedTurnsRemaining = 1; // Skip 1 turn
 	}
 
-	// Check win condition: completed a full circle
-	if (crossedStart && !player.hasCompletedCircle) {
-		player.hasCompletedCircle = true;
-		gameState.isGameOver = true;
-		gameState.winnerId = playerId;
+	// Check win condition: completed required number of circles
+	if (crossedStart) {
+		player.completedCircles++;
+		if (player.completedCircles >= GAME_CONFIG.ROUNDS_TO_WIN) {
+			gameState.isGameOver = true;
+			gameState.winnerId = playerId;
+		}
 	}
 
 	return {
 		diceValue,
 		fromPosition,
-		toPosition: player.position,
+		landedPosition: newPosition, // Where they first landed (before move_back/go_to_jail)
+		toPosition: player.position, // Final position after all effects
 		effectResult,
 		crossedStart,
 		isGameOver: gameState.isGameOver,

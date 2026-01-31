@@ -31,7 +31,7 @@ export const players = sqliteTable('players', {
 	// Game state
 	position: integer('position').notNull().default(0), // 0-27 board position
 	ballots: integer('ballots').notNull().default(0), // Score
-	hasCompletedCircle: integer('has_completed_circle', { mode: 'boolean' }).notNull().default(false),
+	completedCircles: integer('completed_circles').notNull().default(0),
 	isAlive: integer('is_alive', { mode: 'boolean' }).notNull().default(true),
 	isHost: integer('is_host', { mode: 'boolean' }).notNull().default(false),
 	joinedAt: integer('joined_at', { mode: 'timestamp' })

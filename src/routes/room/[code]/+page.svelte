@@ -126,7 +126,7 @@
 							name: p.name,
 							position: 0,
 							ballots: 0,
-							hasCompletedCircle: false,
+							completedCircles: 0,
 							isAlive: true,
 							isHost: p.isHost,
 							isConnected: p.isConnected
@@ -157,7 +157,7 @@
 							...(players.find((ep) => ep.id === p.id) || {
 								position: 0,
 								ballots: 0,
-								hasCompletedCircle: false,
+								completedCircles: 0,
 								isAlive: true
 							}),
 							id: p.id,
@@ -184,7 +184,7 @@
 				name: p.name,
 				position: 0,
 				ballots: 0,
-				hasCompletedCircle: false,
+				completedCircles: 0,
 				isAlive: true,
 				isHost: p.isHost,
 				isConnected: p.isConnected
@@ -211,7 +211,7 @@
 				name: p.name,
 				position: p.position,
 				ballots: p.ballots,
-				hasCompletedCircle: p.hasCompletedCircle,
+				completedCircles: p.completedCircles,
 				isAlive: p.isAlive,
 				isConnected: p.isConnected
 			}));
@@ -285,7 +285,7 @@
 				name: p.name,
 				position: p.position,
 				ballots: p.ballots,
-				hasCompletedCircle: p.hasCompletedCircle,
+				completedCircles: p.completedCircles,
 				isAlive: p.isAlive,
 				isConnected: p.isConnected
 			}));
@@ -311,7 +311,7 @@
 				name: p.name,
 				position: p.position,
 				ballots: p.ballots,
-				hasCompletedCircle: p.hasCompletedCircle,
+				completedCircles: p.completedCircles,
 				isAlive: p.isAlive,
 				isConnected: p.isConnected
 			}));
@@ -515,23 +515,8 @@
 
 				<!-- Side Panel -->
 				<div class="flex flex-col gap-4 lg:w-80">
-					<!-- Player Panel -->
-					<PlayerPanel {players} {currentTurnPlayerId} {myId} />
-
-					<!-- Dice Section -->
-					<div class="card-base">
-						<DiceRoller
-							{isMyTurn}
-							{isRolling}
-							{showingResult}
-							{lastDiceValue}
-							{currentRollerName}
-							onRoll={rollDice}
-						/>
-					</div>
-
 					<!-- Current Turn Indicator -->
-					<div class="card-base text-center">
+					<div class="card-base text-center lg:order-3">
 						{#if isMyTurn}
 							<p class="text-lg font-bold text-[#2E7D32]">আপনার পালা! 🎲</p>
 						{:else}
@@ -540,6 +525,42 @@
 								{currentPlayer?.name || ''}-এর পালা
 							</p>
 						{/if}
+					</div>
+
+					<!-- Mobile: Side by side layout for Dice and Players -->
+					<div class="flex flex-row gap-3 lg:hidden">
+						<!-- Dice Section -->
+						<div class="card-base flex-1">
+							<DiceRoller
+								{isMyTurn}
+								{isRolling}
+								{showingResult}
+								{lastDiceValue}
+								{currentRollerName}
+								onRoll={rollDice}
+							/>
+						</div>
+
+						<!-- Player Panel -->
+						<div class="flex-1">
+							<PlayerPanel {players} {currentTurnPlayerId} {myId} />
+						</div>
+					</div>
+
+					<!-- Desktop: Stacked layout -->
+					<div class="hidden lg:order-1 lg:block">
+						<PlayerPanel {players} {currentTurnPlayerId} {myId} />
+					</div>
+
+					<div class="card-base hidden lg:order-2 lg:block">
+						<DiceRoller
+							{isMyTurn}
+							{isRolling}
+							{showingResult}
+							{lastDiceValue}
+							{currentRollerName}
+							onRoll={rollDice}
+						/>
 					</div>
 				</div>
 			</div>

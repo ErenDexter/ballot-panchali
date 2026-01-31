@@ -41,7 +41,7 @@ export async function restoreGameStateFromDb(roomId: string): Promise<GameState 
 			socketId: p.socketId || '',
 			position: p.position,
 			ballots: p.ballots,
-			hasCompletedCircle: p.hasCompletedCircle,
+			completedCircles: p.completedCircles,
 			isAlive: p.isAlive,
 			isConnected: false, // Will be updated when they reconnect
 			jailedTurnsRemaining: 0
@@ -73,7 +73,7 @@ export async function saveGameState(gameState: GameState): Promise<void> {
 			.set({
 				position: player.position,
 				ballots: player.ballots,
-				hasCompletedCircle: player.hasCompletedCircle,
+				completedCircles: player.completedCircles,
 				isAlive: player.isAlive
 			})
 			.where(eq(players.id, player.id));
@@ -89,7 +89,7 @@ export function getPublicPlayerInfo(player: PlayerState) {
 		name: player.name,
 		position: player.position,
 		ballots: player.ballots,
-		hasCompletedCircle: player.hasCompletedCircle,
+		completedCircles: player.completedCircles,
 		isAlive: player.isAlive,
 		isConnected: player.isConnected
 	};

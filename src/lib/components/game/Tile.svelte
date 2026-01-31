@@ -1,5 +1,7 @@
 <script lang="ts">
 	import type { BoardTile } from '$lib/game/board';
+	import { TILE_STORY_MAP } from '$lib/game/stories';
+	import genieSprite from '$lib/assets/genie.png';
 
 	interface Props {
 		tile: BoardTile;
@@ -9,6 +11,9 @@
 	}
 
 	let { tile, orientation = 'top', isCorner = false, cornerType }: Props = $props();
+
+	// Check if this tile has a story
+	const hasStory = $derived(tile.index in TILE_STORY_MAP);
 
 	// Get effect display text
 	function getEffectText(tile: BoardTile): string {
@@ -63,6 +68,7 @@
 			</div>
 		{:else if cornerType === 'jail'}
 			<div class="corner-content jail">
+				<img src={genieSprite} alt="Story" class="genie-sprite-corner" />
 				<span class="corner-title">জেল</span>
 			</div>
 		{:else if cornerType === 'field'}
@@ -72,8 +78,11 @@
 		{/if}
 	</div>
 {:else}
-	<div class="tile tile-{orientation}" class:surprise={tile.effect === 'surprise'}>
+	<div class="tile tile-{orientation}" class:surprise={tile.effect === 'surprise'} class:has-story={hasStory}>
 		<div class="tile-content">
+			{#if hasStory}
+				<img src={genieSprite} alt="Story" class="genie-sprite" />
+			{/if}
 			<span class="tile-name">{tile.nameBn}</span>
 			{#if tile.effect === 'surprise'}
 				<span class="surprise-icon">🎁</span>
@@ -192,6 +201,24 @@
 
 	.surprise-icon {
 		font-size: clamp(0.5rem, 1.2vw, 0.9rem);
+	}
+
+	.tile.has-story {
+		background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+	}
+
+	.genie-sprite {
+		width: clamp(24px, 5vw, 40px);
+		height: clamp(24px, 5vw, 40px);
+		object-fit: contain;
+		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+	}
+
+	.genie-sprite-corner {
+		width: clamp(28px, 6vw, 48px);
+		height: clamp(28px, 6vw, 48px);
+		object-fit: contain;
+		filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
 	}
 
 	.text-green-700 {

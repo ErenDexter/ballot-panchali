@@ -65,7 +65,7 @@ export function handleStartGame(io: Server, socket: Socket) {
 				socketId: p.socketId!,
 				position: GAME_CONFIG.STARTING_POSITION,
 				ballots: GAME_CONFIG.STARTING_BALLOTS,
-				hasCompletedCircle: false,
+				completedCircles: 0,
 				isAlive: true,
 				isConnected: true,
 				jailedTurnsRemaining: 0
@@ -153,9 +153,9 @@ export function handleRollDice(io: Server, socket: Socket) {
 			crossedStart: result.crossedStart
 		});
 
-		// Check if player landed on a story tile
-		const story = getStoryForTile(result.toPosition);
-		console.log(`[STORY] Player landed on tile ${result.toPosition}, story:`, story?.type || 'none');
+		// Check if player landed on a story tile (use landedPosition, not toPosition which may be after move_back)
+		const story = getStoryForTile(result.landedPosition);
+		console.log(`[STORY] Player landed on tile ${result.landedPosition} (final: ${result.toPosition}), story:`, story?.type || 'none');
 		if (story) {
 			console.log(`[STORY] Emitting show_story for ${story.type} to room ${room.code}`);
 			io.to(room.code).emit('show_story', {

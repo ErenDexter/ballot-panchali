@@ -64,15 +64,8 @@
 		</svg>
 	</div>
 
-	<!-- Result Display - shows to ALL players for 2 seconds -->
-	{#if showingResult && lastDiceValue}
-		<div class="result-display" transition:scale={{ duration: 300 }}>
-			<span class="result-number">{lastDiceValue}</span>
-			{#if currentRollerName}
-				<span class="roller-name">{currentRollerName} পেয়েছেন!</span>
-			{/if}
-		</div>
-	{:else if isRolling}
+	<!-- Roll Button or Status -->
+	{#if isRolling}
 		<div class="rolling-text" transition:fade>
 			{#if currentRollerName}
 				{currentRollerName} ঘুরাচ্ছেন...
@@ -119,33 +112,6 @@
 		width: 100%;
 		height: 100%;
 		filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
-	}
-
-	.result-display {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 0.5rem;
-		padding: 1rem;
-		background: linear-gradient(135deg, rgba(46, 125, 50, 0.2), rgba(46, 125, 50, 0.1));
-		border: 2px solid #2E7D32;
-		border-radius: 0.75rem;
-		animation: pulse 1s ease-in-out infinite;
-	}
-
-	.result-number {
-		font-family: 'Tiro Bangla', serif;
-		font-size: clamp(2rem, 5vw, 3rem);
-		font-weight: 700;
-		color: #2E7D32;
-		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	}
-
-	.roller-name {
-		font-family: 'Hind Siliguri', sans-serif;
-		font-size: clamp(0.9rem, 2vw, 1.1rem);
-		color: #F5F0E1;
-		font-weight: 500;
 	}
 
 	.roll-button {
@@ -209,12 +175,4 @@
 		}
 	}
 
-	@keyframes pulse {
-		0%, 100% {
-			box-shadow: 0 0 10px rgba(46, 125, 50, 0.3);
-		}
-		50% {
-			box-shadow: 0 0 20px rgba(46, 125, 50, 0.6);
-		}
-	}
 </style>

@@ -5,7 +5,7 @@ export interface Player {
 	name: string;
 	position: number;
 	ballots: number;
-	hasCompletedCircle: boolean;
+	completedCircles: number;
 	isAlive: boolean;
 	isHost?: boolean;
 	isConnected?: boolean;
@@ -17,7 +17,7 @@ export interface PlayerInfo {
 	name: string;
 	position: number;
 	ballots: number;
-	hasCompletedCircle: boolean;
+	completedCircles: number;
 	isAlive: boolean;
 	isConnected: boolean;
 }
