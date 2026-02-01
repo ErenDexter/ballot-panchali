@@ -1,6 +1,7 @@
 <script>
 	import './layout.css';
 	import genvoteLogo from '$lib/assets/genvote bd.png';
+	import ifesLogo from '$lib/assets/IFES_Logo.png';
 
 	let { children } = $props();
 </script>
@@ -34,12 +35,19 @@
 			</div>
 
 			<div class="flex flex-col items-center gap-4 text-center">
-				<!-- Logo -->
-				<img
-					src={genvoteLogo}
-					alt="GenVote BD Logo"
-					class="h-12 w-auto drop-shadow-lg transition-transform hover:scale-105"
-				/>
+				<!-- Logos -->
+				<div class="flex items-center justify-center gap-0">
+					<img
+						src={genvoteLogo}
+						alt="GenVote BD Logo"
+						class="h-12 w-auto drop-shadow-lg transition-transform hover:scale-105"
+					/>
+					<img
+						src={ifesLogo}
+						alt="IFES Logo"
+						class="h-12 w-auto drop-shadow-lg transition-transform hover:scale-105"
+					/>
+				</div>
 
 				<!-- Text -->
 				<div class="space-y-1">
